@@ -16,3 +16,4 @@ NOTE:
 - "vertex" coordinates are floats, unbounded
   `vx, vy`
 
+how to calculate distance from point to line

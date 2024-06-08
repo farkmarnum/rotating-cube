@@ -3,7 +3,8 @@ const fs = require("fs");
 const p = (str) => process.stdout.write(str);
 const sleep = async (ms) =>
   await new Promise((resolve) => setTimeout(resolve, ms));
-const log = (msg) => fs.appendFileSync("./log.txt", `${msg}\n`);
+const log = (...msg) => fs.appendFileSync("./log.txt", `${msg}\n`);
+const { abs, round, floor, ceil } = Math;
 
 const setup = () => {
   console.clear();
@@ -16,17 +17,15 @@ const cleanup = () => {
 };
 
 // screen dimensions
-const WIDTH = 30;
-const HEIGHT = 15;
+const WIDTH = 36;
+const HEIGHT = 18;
 
 const pointToPixel = ([x, y]) => {
   return [Math.round(x * (WIDTH - 1)), Math.round(y * (HEIGHT - 1))];
 };
 
-const distance = ([x0, y0], [x1, y1]) => (x1 - x0) ** 2 + (y1 - y0) ** 2;
-
 const run = async () => {
-  const lines = [[0.25, 0.25, 0.5, 0.5]];
+  const lines = [[0, 0, 1, 1]];
 
   // buffer for screen pixel values
   const screen = new Array(HEIGHT).fill().map(() => new Array(WIDTH).fill(0));
@@ -34,27 +33,31 @@ const run = async () => {
   const drawLine = (line) => {
     // point coords
     const [x0, y0, x1, y1] = line;
-
     // pixel coords:
-    const [px0, py0] = pointToPixel([x0, y0]);
-    const [px1, py1] = pointToPixel([x1, y1]);
+    const a = pointToPixel([x0, y0]);
+    const b = pointToPixel([x1, y1]);
 
-    // determine which dimension has more change 0 = x, 1 = y
-    const mainDirection = Math.abs(px1 - px0) > Math.abs(py1 - py0) ? 0 : 1;
+    // determine which dimension has more change (0 = x, 1 = y)
+    const dim = abs(b[0] - a[0]) > abs(b[1] - a[1]) ? 0 : 1;
 
-    if (mainDirection === 0) {
-      const dx = px1 > px0 ? 1 : -1;
-      for (let px = px0; (px += dx); (px1 - px0) * dx > 0) {
-        const py = Math.round(((px - px0) / (px1 - px0)) * (py1 - py0));
-        screen[py][px] = 1;
-      }
-    } else {
-      const dy = py1 > py0 ? 1 : -1;
-      for (let py = py0; (py += dy); (py1 - py0) * dy > 0) {
-        const px = Math.round(((py - py0) / (py1 - py0)) * (px1 - px0));
-        screen[py][px] = 1;
-      }
+    // determine which direction we're moving along this dimension
+    const sign = b[dim] > a[dim] ? 1 : -1;
+
+    // the (signed) length we'll travel in this dimension
+    const span = b[dim] - a[dim];
+
+    // the (signed) length we'll travel in the other dimension
+    const otherSpan = b[1 - dim] - a[1 - dim];
+
+    // follow dimension from a to b, tracking `c` along that dimension and calculating `d` for the other
+    for (let c = a[dim]; c !== b[dim]; c += sign) {
+      const d = round(((c - a[dim]) / span) * otherSpan + a[1 - dim]);
+      const px = dim ? c : d;
+      const py = dim ? d : c;
+      screen[py][px] = 1;
     }
+    // draw last point
+    screen[end[1]][end[0]] = 1;
   };
 
   try {
