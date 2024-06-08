@@ -39,65 +39,21 @@ const run = async () => {
     const [px0, py0] = pointToPixel([x0, y0]);
     const [px1, py1] = pointToPixel([x1, y1]);
 
-    // the directions we'll be moving
-    const dx = px1 === px0 ? 0 : px1 > px0 ? 1 : -1;
-    const dy = py1 === py0 ? 0 : py1 > py0 ? 1 : -1;
+    // determine which dimension has more change 0 = x, 1 = y
+    const mainDirection = Math.abs(px1 - px0) > Math.abs(py1 - py0) ? 0 : 1;
 
-    // current pixel
-    let px = px0;
-    let py = py0;
-
-    // console.log("start");
-    // console.log({ px0, py0 });
-    // console.log({ px1, py1 });
-    // console.log({ px, py });
-    // console.log({ dx, dy });
-
-    // draw the first point
-    screen[py][px] = 1;
-
-    let i = 0; // safety valve
-    let slopeIfWeChangeX;
-    let slopeIfWeChangeY;
-    let slopeOfLine;
-    let xSlopeDiff;
-    let ySlopeDiff;
-    console.log({ px0, py0 });
-    console.log({ px1, py1 });
-    try {
-      while (px !== px1 || py !== py1) {
-        if (i++ > 100) {
-          console.log();
-          console.log(JSON.stringify({ px, py, px0, py0, px1, py1 }));
-          throw new Error("max loop exceeded!");
-        }
-
-        // figure where to go next, either [px + dx, py] or [px, py + dy]
-        // for each point, we'll calculate the slope of line from it to [px1, py1]
-        // and we'll pick the one whose slope is closer to the actual slope
-        slopeIfWeChangeX = (py1 - py) / (px1 - (px + dx));
-        slopeIfWeChangeY = (py1 - (py + dy)) / (px1 - px);
-        slopeOfLine = (py1 - py0) / (px0 - px1);
-        xSlopeDiff = Math.abs(slopeIfWeChangeX - slopeOfLine);
-        ySlopeDiff = Math.abs(slopeIfWeChangeY - slopeOfLine);
-
-        if (xSlopeDiff <= ySlopeDiff) px += dx;
-        if (xSlopeDiff >= ySlopeDiff) py += dy;
-
-        console.log({ px, py });
-
-        // draw the point
+    if (mainDirection === 0) {
+      const dx = px1 > px0 ? 1 : -1;
+      for (let px = px0; (px += dx); (px1 - px0) * dx > 0) {
+        const py = Math.round(((px - px0) / (px1 - px0)) * (py1 - py0));
         screen[py][px] = 1;
-        // console.log(py, px);
       }
-    } catch {
-      console.log({
-        slopeIfWeChangeX,
-        slopeIfWeChangeY,
-        slopeOfLine,
-        xSlopeDiff,
-        ySlopeDiff,
-      });
+    } else {
+      const dy = py1 > py0 ? 1 : -1;
+      for (let py = py0; (py += dy); (py1 - py0) * dy > 0) {
+        const px = Math.round(((py - py0) / (py1 - py0)) * (px1 - px0));
+        screen[py][px] = 1;
+      }
     }
   };
 
