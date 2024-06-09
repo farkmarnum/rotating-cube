@@ -131,12 +131,9 @@ const run = async () => {
 
       await sleep(0); // give up the thread so we can accept interrupts
 
-      // show fps
-      if (process.env.DRAW_CUBE_SHOW_FPS) {
-        const thisFrameFps = round(1000 / msSinceStartOfThisFrame);
-        storeFps(thisFrameFps);
-        print(round(getFps()) + " fps " + OFF_CHAR.repeat(3), 0, 0);
-      }
+      const thisFrameFps = round(1000 / msSinceStartOfThisFrame);
+      storeFps(thisFrameFps);
+      print(round(getFps()) + " fps " + OFF_CHAR.repeat(3), 0, 0);
     }
   } finally {
     cleanup();

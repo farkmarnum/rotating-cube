@@ -2,6 +2,8 @@ import {
   MAX_SCREEN_DIMENSION,
   OFF_CHAR,
   TERM_CHAR_ASPECT,
+  stderr,
+  stdout,
 } from "./constants.mjs";
 
 export const sleep = async (ms) =>
@@ -94,7 +96,7 @@ export const rotate = (vec, a, b, c) => {
 
 export const setup = (width, height) => {
   console.clear();
-  process.stderr.write("\x1B[?25l"); // Hide cursor
+  stderr.write("\x1B[?25l"); // Hide cursor
 
   // initialize the screen with the off character
   for (let i = 0; i < height; i++) {
@@ -106,12 +108,12 @@ export const setup = (width, height) => {
 
 export const cleanup = () => {
   console.clear();
-  process.stderr.write("\x1B[?25h"); // Show cursor
+  stderr.write("\x1B[?25h"); // Show cursor
 };
 
 export const getTerminalDimensions = () => {
-  const width = process.stdout.columns - 1;
-  const height = process.stdout.rows - 1;
+  const width = stdout.columns - 1;
+  const height = stdout.rows - 1;
 
   // Ensure the height is at least as tall as the width
   const minHeight = Math.floor(width / TERM_CHAR_ASPECT);
@@ -276,6 +278,6 @@ export const drawLine = (line, screen, camera) => {
 
 /** print `char` at `x` `y` in terminal */
 export const print = (char, x, y) => {
-  process.stdout.cursorTo(x, y);
-  process.stdout.write(char);
+  stdout.cursorTo(x, y);
+  stdout.write(char);
 };

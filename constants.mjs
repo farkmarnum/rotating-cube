@@ -1,3 +1,4 @@
+export const { stderr, stdout } = process;
 export const MAX_SCREEN_DIMENSION = 1000;
 
 // render characters
