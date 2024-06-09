@@ -1,9 +1,9 @@
 {
-  "name": "spinning-cube",
+  "name": "rotating-cube",
   "version": "0.1.0",
   "license": "MIT",
   "bin": {
-    "spinning-cube": "./dist/main.js"
+    "rotating-cube": "./dist/main.js"
   },
   "scripts": {
     "start": "node --watch index.mjs",
