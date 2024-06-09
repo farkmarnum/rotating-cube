@@ -4,7 +4,7 @@ import { WIDTH, HEIGHT, ON_CHAR, OFF_CHAR, FPS } from "./constants.mjs";
 const p = (str) => process.stdout.write(str);
 
 const run = async () => {
-  const e = 6;
+  const e = 5;
   const lines = [
     [
       [-e, -e, 0],
@@ -20,47 +20,54 @@ const run = async () => {
     direction: { x: 0, y: 0, z: -1 },
     up: { x: 0, y: 1, z: 0 },
     fov: (0.75 * Math.PI) / 4,
-    aspect: HEIGHT / WIDTH,
+    aspect: 1,
   };
 
-  // try {
-  setup();
+  try {
+    setup();
 
-  let t; // keep track of time
+    let t; // keep track of time
 
-  // while (true) {
-  t = performance.now();
+    while (true) {
+      t = performance.now();
 
-  // start by clearing the console
-  console.clear();
+      // start by clearing the console
+      console.clear();
 
-  // reset the screen buffer
-  for (let i = 0; i < HEIGHT; i++) {
-    for (let j = 0; j < WIDTH; j++) {
-      screen[i][j] = 0;
+      // reset the screen buffer
+      for (let i = 0; i < HEIGHT; i++) {
+        for (let j = 0; j < WIDTH; j++) {
+          screen[i][j] = 0;
+        }
+      }
+
+      // draw the lines
+      lines.forEach((line) => drawLine(line, screen, camera));
+
+      // render the pixels
+      for (let i = 0; i < HEIGHT; i++) {
+        for (let j = 0; j < WIDTH; j++) {
+          p(screen[i][j] ? ON_CHAR : OFF_CHAR);
+        }
+        p("\n");
+      }
+
+      const angle = ((performance.now() / 1000) * Math.PI) / 2;
+      // adjust lines
+      lines[0] = [
+        [-e * Math.sin(angle), -e * Math.cos(angle), 0],
+        [e * Math.sin(angle), e * Math.cos(angle), 0],
+      ];
+
+      const msSinceStartOfThisFrame = performance.now() - t;
+      const msUntilNextFrame = 1000 / FPS - msSinceStartOfThisFrame;
+
+      // wait until next frame
+      await sleep(max(0, msUntilNextFrame));
     }
+  } finally {
+    cleanup();
   }
-
-  // draw the lines
-  lines.forEach((line) => drawLine(line, screen, camera));
-
-  // render the pixels
-  for (let i = 0; i < HEIGHT; i++) {
-    for (let j = 0; j < WIDTH; j++) {
-      p(screen[i][j] ? ON_CHAR : OFF_CHAR);
-    }
-    p("\n");
-  }
-
-  const msSinceStartOfThisFrame = performance.now() - t;
-  const msUntilNextFrame = 1000 / FPS - msSinceStartOfThisFrame;
-
-  // wait until next frame
-  await sleep(max(0, msUntilNextFrame));
-  // }
-  // } finally {
-  //   cleanup();
-  // }
 };
 
 // quit gracefully

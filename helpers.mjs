@@ -24,6 +24,8 @@ const crossProduct = (a, b) => ({
   z: a.x * b.y - a.y * b.x,
 });
 
+const dotProduct = (a, b) => a.x * b.x + a.y * b.y + a.z * b.z;
+
 /** scale vectors */
 const scale = (vec, k) => ({
   x: vec.x * k,
@@ -141,12 +143,12 @@ const projectToCamera = (point, camera) => {
   // Now we need to find the plane segment for the screen
   // - it's on the plane
   // - its center is `center`
-  // - height / width should be `aspect`
+  // - `aspect = h/w, so w = h/aspect`
   // - height should be tan(fov) * 2
   // - the "right" direction should be the cross product of `dir` and `up`
   const h = tan(fov) * 2;
   const w = h / aspect;
-  const right = crossProduct(dir, up);
+  const right = normalizeXYZ(crossProduct(dir, up));
   const topLeftPoint = add(add(center, scale(up, h / 2)), scale(right, -w / 2));
 
   // Now let's get the coordinates of `pointOnPlane` within this plane segment
@@ -158,11 +160,9 @@ const projectToCamera = (point, camera) => {
   // - project this vector onto `right` and `up`
   // - divide the projections by the width and height of the plane segment
   const toPoint = sub(pointOnPlane, topLeftPoint);
-  const sx =
-    sum([toPoint.x * right.x, toPoint.y * right.y, toPoint.z * right.z]) / w; // (dot product)
-  const sy = -sum([toPoint.x * up.x, toPoint.y * up.y, toPoint.z * up.z]) / h; // (dot product)
+  const sx = dotProduct(toPoint, right) / w;
+  const sy = -dotProduct(toPoint, up) / h;
 
-  console.log([sx, sy]);
   if (sx < 0 || sy < 0 || sx > 1 || sy > 1) return null; // point is not in view
   return [sx, sy];
 };
@@ -190,8 +190,8 @@ export const drawLine = (line, screen, camera) => {
   const s0 = projectToCamera({ x: x0, y: y0, z: z0 }, camera);
   const s1 = projectToCamera({ x: x1, y: y1, z: z1 }, camera);
   if (!s0 || !s1) return;
-  const [sx0, sx1] = s0;
-  const [sy0, sy1] = s1;
+  const [sx0, sy0] = s0;
+  const [sx1, sy1] = s1;
 
   // pixel coords:
   const [px0, py0] = screenToPixel(sx0, sy0, width, height);
