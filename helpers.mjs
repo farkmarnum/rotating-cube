@@ -97,8 +97,8 @@ export const cleanup = () => {
 };
 
 export const getTerminalDimensions = () => {
-  const width = process.stdout.columns - 1;
-  const height = process.stdout.rows - 1;
+  const width = process.stdout.columns;
+  const height = process.stdout.rows;
 
   // Ensure the height is at least as tall as the width
   const minHeight = round(width / TERM_CHAR_ASPECT);
@@ -124,7 +124,7 @@ export const setHeight = (height) => {
 
 export const getCamera = () => ({
   pos: { x: 0, y: 0, z: 4 },
-  direction: { x: 0, y: 0, z: -1 },
+  dir: { x: 0, y: 0, z: -1 },
   up: { x: 0, y: 1, z: 0 },
   fov: PI / 6, // (45 degrees)
   aspect: (getHeight() / getWidth()) * TERM_CHAR_ASPECT,
@@ -134,7 +134,7 @@ export const getCamera = () => ({
  * @param {[number, number, number]} point
  * @param {{
  *   pos: { x: number, y: number, z: number };
- *   direction: { x: number, y: number, z: number };
+ *   dir: { x: number, y: number, z: number };
  *   up: { x: number, y: number, z: number };
  *   fov: number;
  *   aspect: number;
@@ -143,8 +143,8 @@ export const getCamera = () => ({
  * @returns {[number, number] | null} `[sx, sy]`, or null if not in view
  */
 const projectToCamera = (point, camera) => {
-  const { pos, direction, up: _up, fov, aspect } = camera;
-  const dir = normalizeXYZ(direction);
+  const { pos, dir: _dir, up: _up, fov, aspect } = camera;
+  const dir = normalizeXYZ(_dir);
   const up = normalizeXYZ(_up);
 
   // the view plane must be:
@@ -165,6 +165,7 @@ const projectToCamera = (point, camera) => {
   const b = dir.y;
   const c = dir.z;
   const d = -(a * _p.x + b * _p.y + c * _p.z);
+
   // We'll keep this point around and call it `center`
   const center = _p;
 

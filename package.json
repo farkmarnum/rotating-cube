@@ -7,7 +7,7 @@
   },
   "scripts": {
     "start": "node --watch index.mjs",
-    "build": "esbuild index.mjs --bundle --format=cjs --target=node12 --minify --outfile=dist/main.js"
+    "build": "esbuild index.mjs --bundle --minify --outfile=dist/main.js"
   },
   "devDependencies": {
     "@eslint/js": "^9.4.0",
