@@ -1,5 +1,9 @@
 import fs from "fs";
-import { getHeight, getWidth } from "./constants.mjs";
+import {
+  MAX_SCREEN_DIMENSION,
+  OFF_CHAR,
+  TERM_CHAR_ASPECT,
+} from "./constants.mjs";
 export const log = (...msg) => fs.appendFileSync("./log.txt", `${msg}\n`);
 
 export const sleep = async (ms) =>
@@ -119,15 +123,50 @@ export const getRandomVec = (dimensions = 2, norm = false) => {
 /** Returns a random [x,y] point in the domain [0,1] for each */
 export const getRandomPoint = () => [Math.random(), Math.random()];
 
-export const setup = () => {
+export const setup = (width, height) => {
   console.clear();
   process.stderr.write("\x1B[?25l"); // Hide cursor
+
+  // initialize the screen with the off character
+  for (let i = 0; i < height; i++) {
+    for (let j = 0; j < width; j++) {
+      print(OFF_CHAR, j, i);
+    }
+  }
 };
 
 export const cleanup = () => {
   console.clear();
   process.stderr.write("\x1B[?25h"); // Show cursor
 };
+
+// screen dimensions
+const terminalDimensions = {
+  width: process.stdout.columns - 1,
+  height: process.stdout.rows - 1,
+};
+
+process.on("SIGWINCH", () => {
+  const width = process.stdout.columns - 1;
+  const height = process.stdout.rows - 1;
+  terminalDimensions.width = width;
+  terminalDimensions.height = height;
+  setup(width, height);
+});
+
+export const getWidth = () =>
+  Math.min(terminalDimensions.width, MAX_SCREEN_DIMENSION);
+
+export const getHeight = () =>
+  Math.min(terminalDimensions.height, MAX_SCREEN_DIMENSION);
+
+export const getCamera = () => ({
+  pos: { x: 0, y: 0, z: 4 },
+  direction: { x: 0, y: 0, z: -1 },
+  up: { x: 0, y: 1, z: 0 },
+  fov: Math.PI / 6, // (45 degrees)
+  aspect: (getHeight() / getWidth()) * TERM_CHAR_ASPECT,
+});
 
 /**
  * @param {[number, number, number]} point
