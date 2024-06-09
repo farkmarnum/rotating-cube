@@ -110,13 +110,14 @@ const run = async () => {
       frameStart = _t;
 
       // smooth rotation that changes over time
+      // Note: the coefficients are arbitrary, and can be changed to get different effects
       const t = Date.now() / 1000;
       const [a, b] = [sin, cos];
       const c = (x) => sin(x + PI / 6);
       const rotX = 0.7 * b(t * 0.06) + 2 * c(t * 0.2) + 4 * a(t * 1.9);
       const rotY = 0.3 * c(t * 0.04) + 3 * a(t * 0.3) + 2 * b(t * 1.5);
       const rotZ = 0.5 * a(t * 0.05) + 4 * b(t * 0.4) + 3 * c(t * 1.1);
-      const f = msSinceStartOfThisFrame / 2000; // rotation factor
+      const f = msSinceStartOfThisFrame / 2000; // rotation factor (this ensures smooth rotation regardless of fps)
       const rot = (x, y, z) => {
         const rotated = rotate({ x, y, z }, rotX * f, rotY * f, rotZ * f);
         return [rotated.x, rotated.y, rotated.z];
