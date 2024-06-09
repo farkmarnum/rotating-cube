@@ -1,13 +1,13 @@
 {
-  "name": "draw-cube",
+  "name": "spinning-cube",
   "version": "0.1.0",
   "license": "MIT",
-  "engines": {
-    "node": ">=18.0.0"
+  "bin": {
+    "spinning-cube": "./dist/main.js"
   },
   "scripts": {
     "start": "node --watch index.mjs",
-    "build": "esbuild index.mjs --bundle --minify --outfile=dist/main.js"
+    "build": "esbuild index.mjs --bundle --minify --outfile=dist/main.js --banner:js='#!/usr/bin/env node'"
   },
   "devDependencies": {
     "@eslint/js": "^9.4.0",
