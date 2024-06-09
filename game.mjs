@@ -4,22 +4,31 @@ import { WIDTH, HEIGHT, ON_CHAR, OFF_CHAR, FPS } from "./constants.mjs";
 const p = (str) => process.stdout.write(str);
 
 const run = async () => {
-  const e = 5;
-  const lines = [
-    [
-      [-e, -e, 0],
-      [e, e, 0],
-    ],
-  ];
+  // prettier-ignore
+  const lines = [ 
+    // unit cube:
+    [-1, -1, -1, -1, -1,  1],
+    [-1, -1, -1, -1,  1, -1],
+    [-1, -1, -1,  1, -1, -1],
+    [-1, -1,  1, -1,  1,  1],
+    [-1, -1,  1,  1, -1,  1],
+    [-1,  1, -1, -1,  1,  1],
+    [-1,  1, -1,  1,  1, -1],
+    [-1,  1,  1,  1,  1,  1],
+    [ 1, -1, -1,  1, -1,  1],
+    [ 1, -1, -1,  1,  1, -1],
+    [ 1, -1,  1,  1,  1,  1],
+    [ 1,  1, -1,  1,  1,  1],
+  ].map((line) => line.map((v) => v - 0.5));
 
   // buffer for screen pixel values
   const screen = range(HEIGHT).map(() => range(WIDTH).fill(0));
 
   const camera = {
-    pos: { x: 0, y: 0, z: 10 },
+    pos: { x: -0.5, y: -0.5, z: 2.5 },
     direction: { x: 0, y: 0, z: -1 },
     up: { x: 0, y: 1, z: 0 },
-    fov: (0.75 * Math.PI) / 4,
+    fov: (0.66 * Math.PI) / 4,
     aspect: 1,
   };
 
@@ -52,17 +61,11 @@ const run = async () => {
         p("\n");
       }
 
-      const angle = ((performance.now() / 1000) * Math.PI) / 2;
-      // adjust lines
-      lines[0] = [
-        [-e * Math.sin(angle), -e * Math.cos(angle), 0],
-        [e * Math.sin(angle), e * Math.cos(angle), 0],
-      ];
-
-      const msSinceStartOfThisFrame = performance.now() - t;
-      const msUntilNextFrame = 1000 / FPS - msSinceStartOfThisFrame;
+      // TODO: rotate cube
 
       // wait until next frame
+      const msSinceStartOfThisFrame = performance.now() - t;
+      const msUntilNextFrame = 1000 / FPS - msSinceStartOfThisFrame;
       await sleep(max(0, msUntilNextFrame));
     }
   } finally {

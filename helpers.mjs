@@ -175,7 +175,7 @@ const screenToPixel = (sx, sy, width, height) => [
 /**
  * Draws `line` to the `screen` buffer.
  *
- * @param {[[number, number], [number, number]]} line (point coordinates, 0.0 to 1.0)
+ * @param {[number, number, number, number, number, number]} line 2 points (x,y,z,x,y,z) in world coordinates
  * @param {number[][]} screen
  * @param {Record<string, any>} camera
  */
@@ -184,7 +184,7 @@ export const drawLine = (line, screen, camera) => {
   const width = screen[0].length;
 
   // worlds coords
-  const [[x0, y0, z0], [x1, y1, z1]] = line;
+  const [x0, y0, z0, x1, y1, z1] = line;
 
   // screen coords
   const s0 = projectToCamera({ x: x0, y: y0, z: z0 }, camera);
