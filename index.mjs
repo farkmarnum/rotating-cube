@@ -12,6 +12,9 @@ import {
   getWidth,
   getHeight,
   getCamera,
+  setWidth,
+  setHeight,
+  getTerminalDimensions,
 } from "./helpers.mjs";
 import { ON_CHAR, OFF_CHAR, MAX_SCREEN_DIMENSION } from "./constants.mjs";
 
@@ -51,6 +54,20 @@ const run = async () => {
   const prevScreen = range(MAX_SCREEN_DIMENSION).map(() =>
     range(MAX_SCREEN_DIMENSION).fill(0)
   );
+
+  process.on("SIGWINCH", () => {
+    const { width, height } = getTerminalDimensions();
+
+    // update the screen dimensions
+    setWidth(width);
+    setHeight(height);
+
+    // reset the screen
+    setup(width, height);
+
+    // reset the screen buffer that tracks previous state
+    prevScreen.forEach((row) => row.fill(0));
+  });
 
   try {
     setup(getWidth(), getHeight());

@@ -140,25 +140,31 @@ export const cleanup = () => {
   process.stderr.write("\x1B[?25h"); // Show cursor
 };
 
-// screen dimensions
-const terminalDimensions = {
-  width: process.stdout.columns - 1,
-  height: process.stdout.rows - 1,
-};
-
-process.on("SIGWINCH", () => {
+export const getTerminalDimensions = () => {
   const width = process.stdout.columns - 1;
   const height = process.stdout.rows - 1;
-  terminalDimensions.width = width;
-  terminalDimensions.height = height;
-  setup(width, height);
-});
+
+  // Ensure the height is at least as tall as the width
+  const minHeight = Math.floor(width / TERM_CHAR_ASPECT);
+
+  return { width, height: Math.min(height, minHeight) };
+};
+
+const terminalDimensions = getTerminalDimensions();
 
 export const getWidth = () =>
   Math.min(terminalDimensions.width, MAX_SCREEN_DIMENSION);
 
 export const getHeight = () =>
   Math.min(terminalDimensions.height, MAX_SCREEN_DIMENSION);
+
+export const setWidth = (width) => {
+  terminalDimensions.width = width;
+};
+
+export const setHeight = (height) => {
+  terminalDimensions.height = height;
+};
 
 export const getCamera = () => ({
   pos: { x: 0, y: 0, z: 4 },
