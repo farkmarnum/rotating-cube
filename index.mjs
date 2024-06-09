@@ -119,9 +119,11 @@ const run = async () => {
       await sleep(0); // sleep for a bit so we can accept interrupts
 
       // show fps
-      const thisFrameFps = round(1000 / msSinceStartOfThisFrame);
-      storeFps(thisFrameFps);
-      print(round(getFps()) + " fps", 0, 0);
+      if (process.env.DRAW_CUBE_SHOW_FPS) {
+        const thisFrameFps = round(1000 / msSinceStartOfThisFrame);
+        storeFps(thisFrameFps);
+        print(round(getFps()) + " fps", 0, 0);
+      }
     }
   } finally {
     cleanup();

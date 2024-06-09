@@ -1,7 +1,13 @@
 {
-  "name": "fun",
+  "name": "draw-cube",
   "version": "0.1.0",
   "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "start": "node --watch index.mjs"
+  },
   "devDependencies": {
     "@eslint/js": "^9.4.0",
     "eslint": "9.x",
