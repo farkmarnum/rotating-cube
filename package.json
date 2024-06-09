@@ -1,14 +1,17 @@
 {
   "name": "rotating-cube",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "license": "MIT",
   "main": "./dist/main.js",
   "bin": {
     "rotating-cube": "./dist/main.js"
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "start": "node --watch index.mjs",
-    "build": "esbuild index.mjs --bundle --minify --outfile=dist/main.js --banner:js='#!/usr/bin/env node'"
+    "build": "esbuild index.mjs --bundle --minify --outfile=dist/main.js"
   },
   "devDependencies": {
     "@eslint/js": "^9.4.0",
