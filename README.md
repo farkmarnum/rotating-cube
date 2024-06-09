@@ -4,8 +4,6 @@
 - figure out where the lines are
 - project the camera
 
-how do you draw a line on a pixel grid?
-
 ---
 
 NOTE:
