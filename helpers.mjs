@@ -1,13 +1,12 @@
-import fs from "fs";
 import {
   MAX_SCREEN_DIMENSION,
   OFF_CHAR,
   TERM_CHAR_ASPECT,
 } from "./constants.mjs";
-export const log = (...msg) => fs.appendFileSync("./log.txt", `${msg}\n`);
 
 export const sleep = async (ms) =>
   await new Promise((resolve) => setTimeout(resolve, ms));
+
 export const {
   abs,
   sqrt,
@@ -21,7 +20,9 @@ export const {
   cos,
   tan,
 } = Math;
+
 export const sum = (arr) => arr.reduce((a, b) => a + b);
+
 export const range = (n) => [...Array(n).keys()];
 
 const normalize = (vec) => {
