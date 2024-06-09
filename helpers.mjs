@@ -92,38 +92,6 @@ export const rotate = (vec, a, b, c) => {
   return { x: x3, y: y3, z: z3 };
 };
 
-/**
- * Returns a vector with random values from -1.0 to 1.0
- *
- * `norm` can be boolean (whether or not to normalize) or a number to normalize the magnitude to
- */
-export const getRandomVec = (dimensions = 2, norm = false) => {
-  if (![1, 2, 3].includes(dimensions)) {
-    throw new Error("dimensions must be 1, 2, or 3");
-  }
-
-  const coords = Array(dimensions)
-    .fill()
-    .map(() => (random() - 0.5) * 2);
-
-  if (!norm) return coords;
-
-  const normalizeTo = norm === true ? 1 : norm; // norm
-
-  try {
-    const normalized = normalize(coords);
-
-    // Set magnitude to target
-    return normalized.map((v) => v * normalizeTo);
-  } catch {
-    // if vector was 0, normalize will fail. retry
-    return getRandomVec();
-  }
-};
-
-/** Returns a random [x,y] point in the domain [0,1] for each */
-export const getRandomPoint = () => [Math.random(), Math.random()];
-
 export const setup = (width, height) => {
   console.clear();
   process.stderr.write("\x1B[?25l"); // Hide cursor
