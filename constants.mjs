@@ -9,22 +9,23 @@ const terminalDimensions = {
 process.on("SIGWINCH", () => {
   terminalDimensions.width = process.stdout.columns - 1;
   terminalDimensions.height = process.stdout.rows - 1;
+  console.clear();
 });
+
 export const getWidth = () =>
   Math.min(terminalDimensions.width, MAX_SCREEN_DIMENSION);
+
 export const getHeight = () =>
   Math.min(terminalDimensions.height, MAX_SCREEN_DIMENSION);
 
 // render characters
 export const ON_CHAR = "■";
-export const OFF_CHAR = "_";
-
-export const FPS = 120;
+export const OFF_CHAR = " ";
 
 const TERM_CHAR_ASPECT = 1.85; // the monospace font aspect ratio, roughly
 
 export const getCamera = () => ({
-  pos: { x: 0, y: 0, z: 3.6 },
+  pos: { x: 0, y: 0, z: 4 },
   direction: { x: 0, y: 0, z: -1 },
   up: { x: 0, y: 1, z: 0 },
   fov: Math.PI / 6, // (45 degrees)

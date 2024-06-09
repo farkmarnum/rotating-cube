@@ -61,5 +61,5 @@ There are a lot of different kinds of coordinates. Here's what I'm currently cal
   - floats, from `0.0` to `1.0`
   - `sx, sy`
 - "pixel" coordinates are the coordinates of the individual pixels
-  - integers, from `0` to `WIDTH-1` and `0` to `HEIGHT-1`
+  - integers, from `0` to `width-1` and `0` to `height-1`
   - `px, py`
