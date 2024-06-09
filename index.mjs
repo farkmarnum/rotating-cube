@@ -15,6 +15,7 @@ import {
   setWidth,
   setHeight,
   getTerminalDimensions,
+  PI,
 } from "./helpers.mjs";
 import { ON_CHAR, OFF_CHAR, MAX_SCREEN_DIMENSION } from "./constants.mjs";
 
@@ -29,27 +30,25 @@ const storeFps = (fps) => {
 };
 
 const run = async () => {
-  // prettier-ignore
-  const lines = [
-    // unit cube:
-    [-1, -1, -1, -1, -1,  1],
-    [-1, -1, -1, -1,  1, -1],
-    [-1, -1, -1,  1, -1, -1],
-    [-1, -1,  1, -1,  1,  1],
-    [-1, -1,  1,  1, -1,  1],
-    [-1,  1, -1, -1,  1,  1],
-    [-1,  1, -1,  1,  1, -1],
-    [-1,  1,  1,  1,  1,  1],
-    [ 1, -1, -1,  1, -1,  1],
-    [ 1, -1, -1,  1,  1, -1],
-    [ 1, -1,  1,  1,  1,  1],
-    [ 1,  1, -1,  1,  1,  1],
-  ];
+  // unit cube:
+  let lines = [];
+  [-1, 1].forEach((i) => {
+    [-1, 1].forEach((j) => {
+      [-1, 1].forEach((k) => {
+        lines.push(
+          [i, j, k, -i, j, k],
+          [i, j, k, i, -j, k],
+          [i, j, k, i, j, -k]
+        );
+      });
+    });
+  });
 
   // buffer for screen pixel values
   const screen = range(MAX_SCREEN_DIMENSION).map(() =>
     range(MAX_SCREEN_DIMENSION).fill(0)
   );
+
   // buffer to track previous screen state
   const prevScreen = range(MAX_SCREEN_DIMENSION).map(() =>
     range(MAX_SCREEN_DIMENSION).fill(0)
@@ -104,13 +103,14 @@ const run = async () => {
         }
       }
 
-      const msSinceStartOfThisFrame = performance.now() - frameStart;
-      frameStart = performance.now();
+      const _t = performance.now();
+      const msSinceStartOfThisFrame = _t - frameStart;
+      frameStart = _t;
 
       // smooth rotation that changes over time
       const t = Date.now() / 1000;
       const [a, b] = [sin, cos];
-      const c = (x) => sin(x + Math.PI / 6);
+      const c = (x) => sin(x + PI / 6);
       const rotX = 0.7 * b(t * 0.06) + 2 * c(t * 0.2) + 4 * a(t * 1.9);
       const rotY = 0.3 * c(t * 0.04) + 3 * a(t * 0.3) + 2 * b(t * 1.5);
       const rotZ = 0.5 * a(t * 0.05) + 4 * b(t * 0.4) + 3 * c(t * 1.1);

@@ -2,26 +2,12 @@ import {
   MAX_SCREEN_DIMENSION,
   OFF_CHAR,
   TERM_CHAR_ASPECT,
-  stderr,
-  stdout,
 } from "./constants.mjs";
 
 export const sleep = async (ms) =>
   await new Promise((resolve) => setTimeout(resolve, ms));
 
-export const {
-  abs,
-  sqrt,
-  floor,
-  round,
-  ceil,
-  random,
-  min,
-  max,
-  sin,
-  cos,
-  tan,
-} = Math;
+export const { abs, min, sqrt, round, sin, cos, tan, PI } = Math;
 
 export const sum = (arr) => arr.reduce((a, b) => a + b);
 
@@ -29,7 +15,6 @@ export const range = (n) => [...Array(n).keys()];
 
 const normalize = (vec) => {
   const magnitude = sqrt(sum(vec.map((v) => v * v)));
-  if (magnitude === 0) throw new Error("Can't normalize 0 vector");
   return vec.map((v) => v / magnitude);
 };
 
@@ -96,7 +81,7 @@ export const rotate = (vec, a, b, c) => {
 
 export const setup = (width, height) => {
   console.clear();
-  stderr.write("\x1B[?25l"); // Hide cursor
+  process.stderr.write("\x1B[?25l"); // Hide cursor
 
   // initialize the screen with the off character
   for (let i = 0; i < height; i++) {
@@ -108,26 +93,26 @@ export const setup = (width, height) => {
 
 export const cleanup = () => {
   console.clear();
-  stderr.write("\x1B[?25h"); // Show cursor
+  process.stderr.write("\x1B[?25h"); // Show cursor
 };
 
 export const getTerminalDimensions = () => {
-  const width = stdout.columns - 1;
-  const height = stdout.rows - 1;
+  const width = process.stdout.columns - 1;
+  const height = process.stdout.rows - 1;
 
   // Ensure the height is at least as tall as the width
-  const minHeight = Math.floor(width / TERM_CHAR_ASPECT);
+  const minHeight = round(width / TERM_CHAR_ASPECT);
 
-  return { width, height: Math.min(height, minHeight) };
+  return { width, height: min(height, minHeight) };
 };
 
 const terminalDimensions = getTerminalDimensions();
 
 export const getWidth = () =>
-  Math.min(terminalDimensions.width, MAX_SCREEN_DIMENSION);
+  min(terminalDimensions.width, MAX_SCREEN_DIMENSION);
 
 export const getHeight = () =>
-  Math.min(terminalDimensions.height, MAX_SCREEN_DIMENSION);
+  min(terminalDimensions.height, MAX_SCREEN_DIMENSION);
 
 export const setWidth = (width) => {
   terminalDimensions.width = width;
@@ -141,7 +126,7 @@ export const getCamera = () => ({
   pos: { x: 0, y: 0, z: 4 },
   direction: { x: 0, y: 0, z: -1 },
   up: { x: 0, y: 1, z: 0 },
-  fov: Math.PI / 6, // (45 degrees)
+  fov: PI / 6, // (45 degrees)
   aspect: (getHeight() / getWidth()) * TERM_CHAR_ASPECT,
 });
 
@@ -278,6 +263,6 @@ export const drawLine = (line, screen, camera) => {
 
 /** print `char` at `x` `y` in terminal */
 export const print = (char, x, y) => {
-  stdout.cursorTo(x, y);
-  stdout.write(char);
+  process.stdout.cursorTo(x, y);
+  process.stdout.write(char);
 };
