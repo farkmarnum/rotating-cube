@@ -1,9 +1,22 @@
 import fs from "fs";
+import { getHeight, getWidth } from "./constants.mjs";
 export const log = (...msg) => fs.appendFileSync("./log.txt", `${msg}\n`);
 
 export const sleep = async (ms) =>
   await new Promise((resolve) => setTimeout(resolve, ms));
-export const { abs, sqrt, floor, round, ceil, random, min, max, tan } = Math;
+export const {
+  abs,
+  sqrt,
+  floor,
+  round,
+  ceil,
+  random,
+  min,
+  max,
+  sin,
+  cos,
+  tan,
+} = Math;
 export const sum = (arr) => arr.reduce((a, b) => a + b);
 export const range = (n) => [...Array(n).keys()];
 
@@ -42,6 +55,37 @@ const add = (a, b) => ({
 
 /** subtract vectors */
 const sub = (a, b) => add(a, scale(b, -1));
+
+/**
+ * Rotates `vec` by `a` radians around the x-axis, `b` radians around the
+ * y-axis, and `v` radians around the z-axis. Rotation center is the origin.
+ */
+export const rotate = (vec, a, b, c) => {
+  const x = vec.x;
+  const y = vec.y;
+  const z = vec.z;
+
+  const sinA = sin(a);
+  const cosA = cos(a);
+  const sinB = sin(b);
+  const cosB = cos(b);
+  const sinC = sin(c);
+  const cosC = cos(c);
+
+  const x1 = x * cosA - y * sinA;
+  const y1 = x * sinA + y * cosA;
+  const z1 = z;
+
+  const x2 = x1 * cosB + z1 * sinB;
+  const y2 = y1;
+  const z2 = z1 * cosB - x1 * sinB;
+
+  const x3 = x2 * cosC - y2 * sinC;
+  const y3 = x2 * sinC + y2 * cosC;
+  const z3 = z2;
+
+  return { x: x3, y: y3, z: z3 };
+};
 
 /**
  * Returns a vector with random values from -1.0 to 1.0
@@ -180,8 +224,8 @@ const screenToPixel = (sx, sy, width, height) => [
  * @param {Record<string, any>} camera
  */
 export const drawLine = (line, screen, camera) => {
-  const height = screen.length;
-  const width = screen[0].length;
+  const height = getHeight();
+  const width = getWidth();
 
   // worlds coords
   const [x0, y0, z0, x1, y1, z1] = line;
@@ -214,4 +258,10 @@ export const drawLine = (line, screen, camera) => {
       screen[py][px] = 1;
     }
   }
+};
+
+/** print `char` at `x` `y` in terminal */
+export const print = (char, x, y) => {
+  process.stdout.cursorTo(x, y);
+  process.stdout.write(char);
 };
